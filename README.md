@@ -12,6 +12,7 @@ A library for automata manipulation. Requires dotty for the display of the autom
 - Compute the intersection of two automata
 - Minimize an automaton by either using the Moore or the Brzozowski algorithm
 - Convert a regular expression to an equivalent automaton by using the Thompson algorithm
+
 ## Example
 Completing and minimizing an automaton
 ```python

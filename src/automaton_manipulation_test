@@ -1,0 +1,95 @@
+#!/usr/bin/python
+""""
+Test automaton_manipulation.
+"""
+from automaton_manipulation import *
+# completer
+print("=>Completer\n")
+a = automaton(
+    alphabet = ['a','b'],
+    initials = [0], finals = [2],
+    transitions = [(0,'a',0), (0,'b',2), (1,'a',0), (1,'b',2)]
+    )
+a.display("Automate A : a completer.", False)
+aComplet = completer(a)
+aComplet.display("Automate A complete.", True)
+
+# miroir
+print("=>Miroir\n")
+a.display("Automate A.", False)
+miroir(a).display("Miroir de l'automate A.", True)
+
+# suppress_epsilon_transition
+print("=>Suppression des epsilon transitions\n")
+b = automaton(epsilons = ['0'] , 
+    transitions = [(0, 'a', 1), (0, '0', 3), (1, 'b', 2) ,
+                    (2, '0', 1), (2, 'a', 3), (3, 'b', 0)] ,  
+    initials = [0] , 
+    finals = [3]
+)
+b.display("Automate B : avec des e-transitons.", False)
+bSansETransition = suppress_epsilon_transitions(a)
+bSansETransition.display("Automate equivalent a B sans e-transitions.", True)
+
+# determiniser
+print("=>Determiniser\n")
+c = automaton(initials=[0,1] ,
+			  finals=[3] ,
+			  transitions=[(0,'a',1) , (1,'a',1),
+                            (2,'b',3),(1,'b',2),(0,'b',3)])
+c.display("Automate C : non deterministe.", False)
+cDeterministe = determiniser(c)
+cDeterministe.display("Automate C determinise.", True)
+
+# complement
+print("=>Complement\n")
+c.display("Automate C.", False)
+cComplement = complement(c)
+cComplement.display("Automate complement de C." , True)
+    
+# union & intersection
+print("=>Union & Intersection\n")
+d = automaton(initials = [1] ,
+                finals = [2] ,
+                transitions = [(1,'a',1),(1,'b',1),(1,'c',2),
+                                (2,'a',2),(2,'b',2),(2,'c',2)])
+e = automaton(initials = [1],
+                finals = [3],
+                transitions = [(1,'a',1),(1,'b',2),(1,'c',1),
+                                (2,'a',3),(2,'b',2),(2,'c',1),
+                                (3,'a',3),(3,'b',3),(3,'c',3)])
+d.display("Automate D.", False)
+e.display("Automate E.", False)
+union(d , e).display("Automate D union E.",False)
+intersection(d , e).display("Automate D intersection E.", False)
+
+# minimiser
+print("=>Minimiser\n")
+f = automaton(transitions = [(0,'a',2),(0,'b',1),(1,'a',2),
+                                (1,'b',1),(2,'a',3),(2,'b',2),
+                                (3,'a',2),(3,'b',6),(4,'a',5),
+                                (4,'b',4),(5,'a',6),(5,'b',5),
+                                (6,'a',5),(6,'b',7),(7,'a',5),
+                                (7,'b',3)],
+                initials = [0],
+                finals = [0 , 3 , 6 , 7 , 4])
+f.display("Automate F a minimiser.", False)
+fMinimise = minimiser(a, "brzozowski")
+fMinimise.display("Automate F Minimise par Brzozowski.", False)
+fMinimiseMoore = minimiser(a, "Moore")
+fMinimiseMoore.display("Automate F Minimise par Moore.", True)
+
+# expression_vers_automate
+print("=>Expression vers automate\n")
+print("Automate de: ['+' , ['a'] , ['b']]")
+expression_vers_automate(['+' , ['a'] , ['b']]).display(wait=False)
+print ("Automate de : [\"*\", [\"+\", [\"a\"], [\".\", [\"*\",\"b\"], [\"a\"]]]]")
+expression_vers_automate(["*", ["+", ["a"], [".", ["*","b"], ["a"]]]]).display(wait=False)
+print ("Automate de : [\"*\" , [\"a\"]]")
+expression_vers_automate(["*" , ["a"]]).display(wait=False)
+
+#expression_vers_liste_Python
+regex = regex_to_list("(ab + c*d)*e")
+print ("Expression \"(a + b*a)*\" vers liste Python :\n", regex)
+print ("Automate de : ", regex)
+expression_vers_automate(regex).display()
